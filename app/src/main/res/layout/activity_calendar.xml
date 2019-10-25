@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:id="@+id/title"
+        >
+
+    </TextView>
+
     <com.haibin.calendarview.CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
@@ -21,7 +30,7 @@
         app:scheme_theme_color="#128c4b"
         app:selected_lunar_text_color="#CFCFCF"
         app:month_view="com.example.helloworld.meizu.MeiZuMonthView"
-        app:week_view="com.example.helloworld.meizu.meizu.MeiZuWeekView"
+        app:week_view="com.example.helloworld.meizu.MeiZuWeekView"
         app:selected_text_color="#333"
         app:selected_theme_color="#108cd4"
         app:week_background="#fff"
@@ -31,5 +40,73 @@
         app:year_view_month_text_color="#ff0000"
         app:year_view_month_text_size="20sp"
         app:year_view_scheme_color="#f17706"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/start_work_time"
+            android:background="@null"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:textSize="28dp"
+            android:text="08-35" />
+
+        <EditText
+            android:id="@+id/leave_work_time"
+            android:background="@null"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="28dp"
+            android:layout_marginRight="30dp"
+            android:text="18-35" />
+
+        <Button
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="2dp"
+            android:onClick="click"
+            android:id="@+id/edit"
+            android:background="@drawable/edit"
+            />
+
+        <Button
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="2dp"
+            android:onClick="click"
+            android:visibility="gone"
+            android:id="@+id/save"
+            android:background="@drawable/save"
+            />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:id="@+id/clock_in"
+        android:layout_marginTop="40dp"
+        android:onClick="click"
+        android:layout_gravity="center_horizontal"
+        android:text="打卡"
+        android:textSize="30dp" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:id="@+id/search_sql"
+        android:layout_marginTop="10dp"
+        android:onClick="click"
+        android:layout_gravity="center_horizontal"
+        android:text="查询"
+        android:textSize="30dp" />
 
 </LinearLayout>
