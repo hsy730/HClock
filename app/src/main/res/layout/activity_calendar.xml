@@ -48,24 +48,38 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/start_work_time"
-            android:background="@null"
-            android:layout_width="120dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:text="签到"/>
+
+        <EditText
+            android:id="@+id/sign_in_time"
+            android:background="@null"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="5dp"
             android:textSize="28dp"
             android:text="08-35" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:text="签退"/>
+
         <EditText
-            android:id="@+id/leave_work_time"
+            android:id="@+id/sign_out_time"
             android:background="@null"
-            android:layout_width="120dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textSize="28dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="10dp"
             android:text="18-35" />
 
         <Button
@@ -96,7 +110,17 @@
         android:layout_marginTop="40dp"
         android:onClick="click"
         android:layout_gravity="center_horizontal"
-        android:text="打卡"
+        android:text="签到"
+        android:textSize="30dp" />
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:id="@+id/punch_off"
+        android:layout_marginTop="40dp"
+        android:visibility="gone"
+        android:onClick="click"
+        android:layout_gravity="center_horizontal"
+        android:text="签退"
         android:textSize="30dp" />
 
     <Button

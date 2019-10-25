@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.helloworld.listener.MyOnCalendarSelectListener;
+import com.example.helloworld.listener.MyOnMonthChangeListener;
 import com.example.helloworld.sqlite.DatabaseAdaper;
 import com.example.helloworld.sqlite.WorkTimeRecord;
 import com.example.helloworld.utils.TimeUtil;
@@ -27,7 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements  ClockinFragment.MyDialogFragment_Listener{
+public class MainActivity extends AppCompatActivity implements  Fragment.MyDialogFragment_Listener{
     private MyOnCalendarSelectListener myOnCalendarSelectListener;
 
     private CalendarView.OnCalendarSelectListener mOnCalendarSelectListener;
@@ -37,12 +39,16 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
     private MyHandler mMyHandler = new MyHandler(this);
     private static TextView title;
     private static String tempSelectedDate;
-    Button edit,save;
-    private EditText startWorkTime,leaveWorkTime;
+    Button edit,save,signInBt,signOutBt;
+    private EditText signInEt,signOutEt;
     private TimeUtil timeUtil;
     FragmentManager fm = getSupportFragmentManager();
     DatabaseAdaper dbAdapter;
     CalendarView calendarView;
+    private boolean validSignIn;
+    private boolean validSignOut;
+    private boolean isSignIn = true;
+    private String signInTime = null;
     String TAG="MainActivity";
 
     @Override
@@ -54,18 +60,101 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
         title = findViewById(R.id.title);
         edit = findViewById(R.id.edit);
         save = findViewById(R.id.save);
-        startWorkTime = findViewById(R.id.start_work_time);
-        leaveWorkTime = findViewById(R.id.leave_work_time);
+        signInEt = findViewById(R.id.sign_in_time);
+        signOutEt = findViewById(R.id.sign_out_time);
+        signInBt = findViewById(R.id.clock_in);
+        signOutBt = findViewById(R.id.punch_off);
+
+
         title.setText(String.format("%s年%s月",calendarView.getCurYear(),calendarView.getCurMonth()));
         //不可编辑
-        startWorkTime.setFocusableInTouchMode(false);
-        leaveWorkTime.setFocusableInTouchMode(false);
+        signInEt.setFocusableInTouchMode(false);
+        signOutEt.setFocusableInTouchMode(false);
         dbAdapter = new DatabaseAdaper(MainActivity.this);
         int n =  calendarView.getCurDay();
         timeUtil = new TimeUtil();
         //获取选择的日期
         Calendar calendar = calendarView.getSelectedCalendar();
         System.out.println("选择日期"+calendar.getDay());
+        // 日历控件监听器
+        addCalendarListener();
+        // 签到签退监听器
+        addEditTextListener();
+        // 签退
+        if (signInTime != null && !"".equals(signInTime)) {
+            signInBt.setVisibility(View.GONE);
+            signOutBt.setVisibility(View.VISIBLE);
+        } else {
+            // 签到
+            signInBt.setVisibility(View.VISIBLE);
+            signOutBt.setVisibility(View.GONE);
+        }
+
+        calendar.getDay();
+        Log.i(TAG, n+"");
+        Log.i(TAG, "选择日期"+calendar.getDay()+"");
+    }
+
+    private void addEditTextListener() {
+        signInEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String text = signInEt.getText().toString().trim();
+                Log.i(TAG, "signInTime，beforeTextChanged: "+text);
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String change = signInEt.getText().toString().trim();
+                Log.i(TAG, "signInTime, afterTextChanged: "+change);
+                if(!timeUtil.checkTimeFormat(change)) {
+                    validSignIn = false;
+                    Toast.makeText(MainActivity.this,"时间格式非法，请输入合法时间", Toast.LENGTH_SHORT).show();
+                } else {
+                    validSignIn = true;
+                    if (validSignOut) {
+                        save.setClickable(true);
+                    }
+                    Toast.makeText(MainActivity.this,"时间格式合法", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String text = signInEt.getText().toString().trim();
+                Log.i(TAG, "signInTime，afterTextChanged: "+text);
+            }
+        });
+
+        signOutEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String text = signOutEt.getText().toString().trim();
+                Log.i(TAG, "signOutEt，beforeTextChanged: "+text);
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String change = signOutEt.getText().toString().trim();
+                Log.i(TAG, "signOutEt, afterTextChanged: "+change);
+                if(!timeUtil.checkTimeFormat(change)) {
+                    validSignOut = false;
+                    save.setClickable(false);
+                    Toast.makeText(MainActivity.this,"时间格式非法，请输入合法时间", Toast.LENGTH_SHORT).show();
+                } else {
+                    validSignOut = true;
+                    if (validSignIn) {
+                        save.setClickable(true);
+                    }
+                    Toast.makeText(MainActivity.this,"时间格式合法", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String text = signOutEt.getText().toString().trim();
+                Log.i(TAG, "signOutEt，afterTextChanged: "+text);
+            }
+        });
+    }
+
+    private void addCalendarListener() {
 
         myOnCalendarSelectListener = new MyOnCalendarSelectListener(){
             @Override
@@ -80,10 +169,10 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
                     //sendMessage()用来传送Message类的值到mHandler
                     mMyHandler.sendMessage(msg);
                     Log.i(TAG, "onCalendarSelect: "+ calendar.getDay());
-
                 }
             }
         };
+
         myOnMonthChangeListener = new MyOnMonthChangeListener(){
             @Override
             public void onMonthChange(int year, int month){
@@ -93,38 +182,18 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
                 mMyHandler.sendMessage(msg);
             }
         };
-
         calendarView.setOnCalendarSelectListener(myOnCalendarSelectListener);
         calendarView.setOnMonthChangeListener(myOnMonthChangeListener);
-        calendar.getDay();
-        Log.i(TAG, n+"");
-        Log.i(TAG, "选择日期"+calendar.getDay()+"");
-
-        startWorkTime.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String text = startWorkTime.getText().toString().trim();
-                if(!timeUtil.checkTimeFormat(text)) {
-                    Toast.makeText(MainActivity.this,"时间格式非法，请输入合法时间", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     // 引用接口中定义的方法
     @Override
     public void getDataFromDialogFragment(String select) {
         Log.d(TAG, "DialogFragment回传的数据为：" + select);
-        if ( ClockinFragment.CLOCK_IN.equals(select)) {
+        if ( Fragment.CLOCK_IN.equals(select)) {
             clockIn();
             Log.i(TAG, "getDataFromDialogFragment: 上班");
-        }else if (ClockinFragment.PUNCH_OFF.equals(select)) {
+        }else if (Fragment.PUNCH_OFF.equals(select)) {
             punchOff();
             Log.i(TAG, "getDataFromDialogFragment: 下班");
         }
@@ -140,7 +209,10 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
                 afterClickSaveButton();
                 break;
             case R.id.clock_in:
-                showEditDialog(view);
+
+            case R.id.punch_off:
+
+                break;
             case R.id.search_sql:
                 searchAll();
                 break;
@@ -159,20 +231,23 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
     }
 
     private void afterClickEditButton() {
-        startWorkTime.setFocusable(true);
-        leaveWorkTime.setFocusable(true);
-        startWorkTime.setFocusableInTouchMode(true);
-        leaveWorkTime.setFocusableInTouchMode(true);
+        signInEt.setFocusable(true);
+        signInEt.setFocusableInTouchMode(true);
+
+        signOutEt.setFocusable(true);
+        signOutEt.setFocusableInTouchMode(true);
+
         edit.setVisibility(View.GONE);
         save.setVisibility(View.VISIBLE);
         Toast.makeText(this,"可以修改", Toast.LENGTH_SHORT).show();
     }
 
     private void afterClickSaveButton() {
-        startWorkTime.setFocusable(false);
-        leaveWorkTime.setFocusable(false);
-        startWorkTime.setFocusableInTouchMode(false);
-        leaveWorkTime.setFocusableInTouchMode(false);
+        signInEt.setFocusable(false);
+        signInEt.setFocusableInTouchMode(false);
+
+        signOutEt.setFocusable(false);
+        signOutEt.setFocusableInTouchMode(false);
         edit.setVisibility(View.VISIBLE);
         save.setVisibility(View.GONE);
         Toast.makeText(this,"保存成功", Toast.LENGTH_SHORT).show();
@@ -180,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements  ClockinFragment.
 
     public void showEditDialog(View view)
     {
-        ClockinFragment mClockinWindow = new ClockinFragment();
+        Fragment mClockinWindow = new Fragment();
 //        Bundle bundle = new Bundle();
 //        calendarView.getCurDay();
 //        bundle.putString("startEt", );
