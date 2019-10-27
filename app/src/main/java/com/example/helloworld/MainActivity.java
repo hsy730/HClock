@@ -30,15 +30,15 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements  Fragment.MyDialogFragment_Listener{
-    private MyOnCalendarSelectListener myOnCalendarSelectListener;
-
-    private CalendarView.OnCalendarSelectListener mOnCalendarSelectListener;
-    private MyOnMonthChangeListener myOnMonthChangeListener;
-    private static final int onCalendarSelectMsg = 0x123;
-    private static final int onMonthChangedMsg = 0x124;
+//    private MyOnCalendarSelectListener myOnCalendarSelectListener;
+//    private MyOnMonthChangeListener myOnMonthChangeListener;
+    private static final int MSG_CALENDAR_SELECT = 0x123;
+    private static final int MSG_MONTH_CHANGED = 0x124;
     private MyHandler mMyHandler = new MyHandler(this);
     private static TextView title;
-    private static String tempSelectedDate;
+    private static String selectDay;
+
+    private static WorkTimeRecord todayRecord;
     Button edit,save,signInBt,signOutBt;
     private EditText signInEt,signOutEt;
     private TimeUtil timeUtil;
@@ -47,52 +47,94 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     CalendarView calendarView;
     private boolean validSignIn;
     private boolean validSignOut;
-    private boolean isSignIn = true;
-    private String signInTime = null;
+//    private boolean isSignIn = true;
+//    private String signInTime = null;
     String TAG="MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        initLayout();
+        int n =  calendarView.getCurDay();
+        //获取选择的日期
+        Calendar calendar = calendarView.getSelectedCalendar();
+        selectDay = String.format("%s-%s-%s",calendar.getYear(),calendar.getMonth(),calendar.getDay());
+        System.out.println("选择日期"+calendar.getDay());
+        // 日历控件监听器
+        addCalendarListener();
+        // 签到签退文本框监听器
+        addEditTextListener();
+
+        initSignInAndSignOutButton();
+        
+        calendar.getDay();
+        Log.i(TAG, n+"");
+        Log.i(TAG, "选择日期"+calendar.getDay()+"");
+    }
+
+    public void click(View view) {
+        System.out.println("我被点击了");
+        switch (view.getId()){
+            // 编辑按钮
+            case R.id.edit:
+                afterClickEditButton();
+                break;
+            // 保存按钮
+            case R.id.save:
+                afterClickSaveButton();
+                break;
+            // 签到按钮
+            case R.id.clock_in:
+                clockIn();
+                signInBt.setVisibility(View.GONE);
+                signOutBt.setVisibility(View.VISIBLE);
+                break;
+            // 签退按钮
+            case R.id.punch_off:
+                punchOff();
+                break;
+            case R.id.search_sql:
+                searchAll();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void initLayout() {
         calendarView = findViewById(R.id.calendarView);
-        TextView text = findViewById(R.id.text);
         title = findViewById(R.id.title);
         edit = findViewById(R.id.edit);
         save = findViewById(R.id.save);
         signInEt = findViewById(R.id.sign_in_time);
         signOutEt = findViewById(R.id.sign_out_time);
-        signInBt = findViewById(R.id.clock_in);
-        signOutBt = findViewById(R.id.punch_off);
-
-
         title.setText(String.format("%s年%s月",calendarView.getCurYear(),calendarView.getCurMonth()));
-        //不可编辑
+        //编辑框初始化不可编辑
         signInEt.setFocusableInTouchMode(false);
         signOutEt.setFocusableInTouchMode(false);
+
+        signInBt = findViewById(R.id.clock_in);
+        signOutBt = findViewById(R.id.punch_off);
         dbAdapter = new DatabaseAdaper(MainActivity.this);
-        int n =  calendarView.getCurDay();
         timeUtil = new TimeUtil();
-        //获取选择的日期
-        Calendar calendar = calendarView.getSelectedCalendar();
-        System.out.println("选择日期"+calendar.getDay());
-        // 日历控件监听器
-        addCalendarListener();
-        // 签到签退监听器
-        addEditTextListener();
-        // 签退
-        if (signInTime != null && !"".equals(signInTime)) {
-            signInBt.setVisibility(View.GONE);
-            signOutBt.setVisibility(View.VISIBLE);
-        } else {
-            // 签到
+    }
+
+    // 初始化签到签退按钮，查询当天数据，如果无则显示签到
+    private void initSignInAndSignOutButton() {
+        todayRecord = dbAdapter.getRecordAtDayOfMonth(timeUtil.getCurYearMonth(),timeUtil.getCurrentDayInMonth());
+        if(todayRecord == null) {
             signInBt.setVisibility(View.VISIBLE);
             signOutBt.setVisibility(View.GONE);
+            Log.i(TAG, "initSignInAndSignOutButton: 无数据，显示签到按钮");
+        } else {
+            // 保存签到时间，签退时更新数据库
+//            todaySignInTime = todayRecord.getBeginTime();
+            signInBt.setVisibility(View.GONE);
+            signOutBt.setVisibility(View.VISIBLE);
+            Log.i(TAG, "initSignInAndSignOutButton: "+todayRecord.toString());
         }
-
-        calendar.getDay();
-        Log.i(TAG, n+"");
-        Log.i(TAG, "选择日期"+calendar.getDay()+"");
     }
 
     private void addEditTextListener() {
@@ -156,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
 
     private void addCalendarListener() {
 
-        myOnCalendarSelectListener = new MyOnCalendarSelectListener(){
+        MyOnCalendarSelectListener myOnCalendarSelectListener = new MyOnCalendarSelectListener(){
             @Override
             public void onCalendarSelect(Calendar calendar, boolean isClick){
                 if(isClick) {
@@ -165,7 +207,8 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                     Message msg = Message.obtain();
                     //Message类有属性字段arg1、arg2、what...
                     msg.obj = calendar;
-                    msg.what = onCalendarSelectMsg;
+
+                    msg.what = MSG_CALENDAR_SELECT;
                     //sendMessage()用来传送Message类的值到mHandler
                     mMyHandler.sendMessage(msg);
                     Log.i(TAG, "onCalendarSelect: "+ calendar.getDay());
@@ -173,13 +216,14 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
             }
         };
 
-        myOnMonthChangeListener = new MyOnMonthChangeListener(){
+        MyOnMonthChangeListener myOnMonthChangeListener = new MyOnMonthChangeListener(){
             @Override
             public void onMonthChange(int year, int month){
                 Message msg = Message.obtain();
                 msg.obj = String.format("%s年%s月",year,month);
-                msg.what = onMonthChangedMsg;
+                msg.what = MSG_MONTH_CHANGED;
                 mMyHandler.sendMessage(msg);
+
             }
         };
         calendarView.setOnCalendarSelectListener(myOnCalendarSelectListener);
@@ -199,27 +243,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         }
 
     }
-    public void click(View view) {
-        System.out.println("我被点击了");
-        switch (view.getId()){
-            case R.id.edit:
-                afterClickEditButton();
-                break;
-            case R.id.save:
-                afterClickSaveButton();
-                break;
-            case R.id.clock_in:
 
-            case R.id.punch_off:
-
-                break;
-            case R.id.search_sql:
-                searchAll();
-                break;
-                default:
-                    break;
-        }
-    }
 
     private void searchAll() {
         ArrayList<WorkTimeRecord> records =  dbAdapter.findAll();
@@ -283,12 +307,12 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
             if (activity != null){
                 //做操作
                 switch ( msg.what){
-                    case onCalendarSelectMsg:
+                    case MSG_CALENDAR_SELECT:
                         Calendar calendar = (Calendar) msg.obj;
-                        tempSelectedDate = String.format("%s-%s-%s",calendar.getYear(),calendar.getMonth(),calendar.getDay());
-                        Log.i(TAG, tempSelectedDate);
+                        selectDay = String.format("%s-%s-%s",calendar.getYear(),calendar.getMonth(),calendar.getDay());
+                        Log.i(TAG, selectDay);
                     break;
-                    case onMonthChangedMsg:
+                    case MSG_MONTH_CHANGED:
                         String MonthInfo = (String)msg.obj;
                         title.setText(MonthInfo);
                     default:
@@ -299,24 +323,39 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         }
     }
 
-    private void punchOff() {
+    private void clockIn() {
         try {
-            WorkTimeRecord record = new WorkTimeRecord(timeUtil.getCurrentMonth(),
-                    timeUtil.getCurrentDayInMonth(), "22", timeUtil.getCurrentTimeStr());
-            dbAdapter.update(record);
-            Log.i(TAG, "punchOff:succ");
+            todayRecord = new WorkTimeRecord(timeUtil.getCurYearMonth()
+                    , timeUtil.getCurrentDayInMonth(), timeUtil.getCurrentTimeStr(), null);
+            Log.i(TAG, "clockIn: todayRecord," + todayRecord.toString());
+            dbAdapter.add(todayRecord);
+            Log.i(TAG, "clockIn: success");
+            // 如果为当天，则顺便设置显示
+            Log.i(TAG, "selectDay:"+selectDay+"今天日期："+timeUtil.getCurYearMonthDay());
+            if (timeUtil.getCurYearMonthDay().equals(selectDay)) {
+                Log.i(TAG, "clockIn: 相等，是今天");
+                signInEt.setText(todayRecord.getBeginTime());
+            }
         } catch (Exception e) {
-            Log.e(TAG, "punchOff: ",e);
+            Log.e(TAG, "clockIn: " , e);
         }
     }
 
-    private void clockIn() {
+    private void punchOff() {
         try {
-            WorkTimeRecord record = new WorkTimeRecord(timeUtil.getCurrentMonth()
-                    , timeUtil.getCurrentDayInMonth(), timeUtil.getCurrentTimeStr(), null);
-            dbAdapter.add(record);
+            todayRecord.setEndTime(timeUtil.getCurrentTimeStr());
+            Log.i(TAG, "punchOff: todayRecord，"+ todayRecord.toString());
+            dbAdapter.update(todayRecord);
+            Log.i(TAG, "punchOff:success");
+            // 如果为当天，则顺便设置显示
+            Log.i(TAG, "selectDay:"+selectDay+"今天日期："+timeUtil.getCurYearMonthDay());
+            if (timeUtil.getCurYearMonthDay().equals(selectDay)) {
+                Log.i(TAG, "clockIn: 相等，是今天");
+                signInEt.setText(todayRecord.getBeginTime());
+                signOutEt.setText(todayRecord.getEndTime());
+            }
         } catch (Exception e) {
-            Log.e(TAG, "clockIn: " , e);
+            Log.e(TAG, "punchOff: ",e);
         }
     }
 

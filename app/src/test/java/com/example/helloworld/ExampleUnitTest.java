@@ -51,7 +51,7 @@ public class ExampleUnitTest {
     public void test1(){
         TimeUtil timeUtil = new TimeUtil();
         System.out.println(timeUtil.getCurrentDayInMonth());
-        System.out.println(timeUtil.getCurrentMonth());
+        System.out.println(timeUtil.getCurYearMonth());
         System.out.println(timeUtil.getCurrentTimeStr());
 
 

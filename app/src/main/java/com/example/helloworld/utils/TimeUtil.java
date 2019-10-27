@@ -4,17 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimeUtil {
-    private String daytimeFormat = "HH:mm";
+//    private String daytimeFormat = "HH:mm";
 
     public String getCurrentTimeStr() {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(daytimeFormat);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(date);
     }
 
-    public String getCurrentMonth() {
+    public String getCurYearMonth() {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+        return dateFormat.format(date);
+    }
+
+    public String getCurYearMonthDay() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
     }
 
