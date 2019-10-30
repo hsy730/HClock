@@ -1,10 +1,14 @@
 package com.example.helloworld;
 
+import android.util.Log;
+
+import com.example.helloworld.utils.StringUtil;
 import com.example.helloworld.utils.TimeUtil;
 
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -17,6 +21,8 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+    private String TAG = "test";
+    TimeUtil timeUtil = new TimeUtil();
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
@@ -53,8 +59,36 @@ public class ExampleUnitTest {
         System.out.println(timeUtil.getCurrentDayInMonth());
         System.out.println(timeUtil.getCurYearMonth());
         System.out.println(timeUtil.getCurrentTimeStr());
+    }
+    @Test
+    public void testGetDayOfWeek() {
+        String x = timeUtil.getDayOfWeekByDate("2019-10-27");
+//        Log.i(TAG, "testGetDayOfWeek: "+x);
+        System.out.println(x);
+    }
+    @Test
+    public void testComparStr() {
+        assertTrue("08:55".compareTo("09:48")<0);
+        assertTrue("08:44".compareTo("09:32")<0);
+        assertTrue("08:55".compareTo("07:48")>0);
 
 
-        
+    }
+    @Test
+    public void testCalcTimeBetween() {
+        TimeUtil timeUtil = new TimeUtil();
+        System.out.println(   timeUtil.calcMinuteBetween("08:32","20:23"));
+        System.out.println(   timeUtil.sumTime("1:32","2:23"));
+
+    }
+    @Test
+    public void testToInt() {
+        System.out.println(StringUtil.toInt("001045"));
+        System.out.println(Integer.parseInt("08"));
+    }
+    @Test
+    public void testSplitTime() {
+        System.out.println(Arrays.toString(timeUtil.splitTimeStr("08.22")));
+//        System.out.println(Integer.parseInt("08"));
     }
 }
