@@ -41,6 +41,15 @@ public class TimeUtil {
         return dateFormat.format(date);
     }
 
+    public boolean isToday(String month, String day) {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if (dateFormat.format(date).equals(String.format("%s-%s",month, day))){
+            return true;
+        }
+        return false;
+    }
+
     public String getCurrentDayInMonth() {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
@@ -147,7 +156,7 @@ public class TimeUtil {
     }
 
     /**
-     *
+     * 检查输入时间的合法性
      * @param str
      * @return
      */
@@ -163,12 +172,11 @@ public class TimeUtil {
                 if (c < 48 || c > 57) { return false; }
             } else {
                 if (c < 48 || c > 57) {
-                    // valid
+                    // valid，skip it
                 }else { return false; }
             }
         }
         //数字大小，时间格式
-        char symbol = str.charAt(2);
         String partHour = str.substring(0,2);
         String partMinute = str.substring(3);
         return checkFormatOf(partHour,partMinute);
@@ -189,7 +197,6 @@ public class TimeUtil {
     public String formatClockTime(String time) {
         return String.format("%s:%s",time.substring(0,2),time.substring(3));
     }
-
 
     /**
      * 根据日期 找到对应日期的 星期

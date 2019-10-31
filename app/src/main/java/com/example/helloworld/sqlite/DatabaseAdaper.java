@@ -131,26 +131,27 @@ public class DatabaseAdaper {
     /**
      * 获取月打卡记录
      * @param month
-     * @param day
      * @return records
      */
-    public WorkTimeRecord getRecordsInMonth(String month,String day){
+    public ArrayList<WorkTimeRecord> getRecordsInMonth(String month){
         SQLiteDatabase db=databaseHelper.getReadableDatabase();
         //是否去除重复记录，参数（表名，要查询的列，查询条件，查询条件的值，分组条件，分组条件的值，排序，分页）
         Cursor c=db.query(true, MetaData.WTRTable.TABLE_NAME, colums, MetaData.WTRTable.MONTH
                 + "=?",new String[]{month},null,null,null,null);
+        ArrayList<WorkTimeRecord> records = new ArrayList<>();
         WorkTimeRecord record=null;
-        if (c.moveToNext()){
+        while (c.moveToNext()){
             record = new WorkTimeRecord();
             record.setId(c.getInt(c.getColumnIndexOrThrow(MetaData.WTRTable._ID)));
             record.setMonth(c.getString(c.getColumnIndexOrThrow(MetaData.WTRTable.MONTH)));
             record.setDay(c.getString(c.getColumnIndexOrThrow(MetaData.WTRTable.DAY)));
             record.setBeginTime(c.getString(c.getColumnIndexOrThrow(MetaData.WTRTable.BEGIN_TIME)));
             record.setEndTime(c.getString(c.getColumnIndexOrThrow(MetaData.WTRTable.END_TIME)));
+            records.add(record);
         }
         c.close();
         db.close();
-        return record;
+        return records;
     }
 }
 
