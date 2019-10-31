@@ -315,8 +315,8 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         String signOut = signOutEt.getText().toString();
         record.setMonth(selectDay.substring(0,7));
         record.setDay(selectDay.substring(8));
-        record.setBeginTime(signIn);
-        record.setEndTime(signOut);
+        record.setBeginTime(timeUtil.formatClockTime(signIn));
+        record.setEndTime(timeUtil.formatClockTime(signOut));
         Log.i(TAG, "saveEditContent: "+record.toString());
         Log.i(TAG, "saveEditContent: preSignInTime/"+preSignInTime+"preSignOutTime/"+preSignOutTime);
         // 之前全为空，执行insert，否则，执行update
@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     public void setTotalOverTimeInTextView() {
         ArrayList<WorkTimeRecord> records = dbAdapter.findAll();
         double totalOverTime = timeUtil.sumOverTimeInAMonth(records);
-        overTime.setText( String.format("%.2f小时", totalOverTime));
+        overTime.setText( String.format("%.2f", totalOverTime));
     }
 
 

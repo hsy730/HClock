@@ -29,11 +29,11 @@ public class WorkTimeRecord {
     @Override
     public String toString() {
         return "WorkTimeRecord{" +
-                "id=" + id + "\'" +
-                ",month=" + month + "\'" +
+                "id='" + id + "\'" +
+                ",month='" + month + "\'" +
                 ",day='" + day + "\'" +
                 ",beginTime='" + beginTime + "\'" +
-                ",endTime=" + endTime + "\'" +
+                ",endTime='" + endTime + "\'" +
                 "}";
     }
 }

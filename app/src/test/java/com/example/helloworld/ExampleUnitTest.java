@@ -2,12 +2,14 @@ package com.example.helloworld;
 
 import android.util.Log;
 
+import com.example.helloworld.sqlite.WorkTimeRecord;
 import com.example.helloworld.utils.StringUtil;
 import com.example.helloworld.utils.TimeUtil;
 
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,5 +92,29 @@ public class ExampleUnitTest {
     public void testSplitTime() {
         System.out.println(Arrays.toString(timeUtil.splitTimeStr("08.22")));
 //        System.out.println(Integer.parseInt("08"));
+    }
+    @Test
+    public void testIsWeekend() {
+        System.out.println(timeUtil.isWeekEnd("2019-10-27"));
+    }
+
+    @Test
+    public void testSumOverTime() {
+        ArrayList<WorkTimeRecord> records = new ArrayList<>();
+
+        records.add(new WorkTimeRecord("2019-10","27","10.32","22.14"));
+        records.add(new WorkTimeRecord("2019-10","29","08:22","18:33"));
+
+        double d = timeUtil.sumOverTimeInAMonth(records);
+        System.out.println(d);
+    }
+
+    @Test
+    public void testCalcMinuteBetween() {
+        System.out.println(timeUtil.calcMinuteBetween("18.00","18.12"));
+    }
+    @Test
+    public void testFormatTime() {
+        System.out.println(timeUtil.formatClockTime("08.22"));
     }
 }

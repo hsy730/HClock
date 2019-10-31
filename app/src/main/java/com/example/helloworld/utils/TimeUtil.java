@@ -120,14 +120,20 @@ public class TimeUtil {
 
     public boolean isWeekEnd(String date){
         String dayInWeek = getDayOfWeekByDate(date);
+        Log.i(TAG, "isWeekEnd: "+dayInWeek);
         // 周末算加班时间
-        if(dayInWeek =="星期六" || dayInWeek =="星期日") {
+        if("周六".equals(dayInWeek) || "周日".equals(dayInWeek)) {
            return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
+    /**
+     * 有效打卡
+     * @param bg
+     * @param ed
+     * @return
+     */
     public boolean isValidClockInWeekDay(String bg, String ed){
         // 迟到
         if (bg.compareTo("09:00") > 0) {
@@ -176,6 +182,16 @@ public class TimeUtil {
     }
 
     /**
+     * 格式化输入时间。输入要求不严格，中间不是数字即可
+     * @param time
+     * @return
+     */
+    public String formatClockTime(String time) {
+        return String.format("%s:%s",time.substring(0,2),time.substring(3));
+    }
+
+
+    /**
      * 根据日期 找到对应日期的 星期
      * @return 星期一~星期日
      */
@@ -205,27 +221,36 @@ public class TimeUtil {
         for (WorkTimeRecord record:records) {
             String bg = record.getBeginTime();
             String ed = record.getEndTime();
+            Log.i(TAG, "sumOverTimeInAMonth: "+record.toString());
+//            System.out.println(record.toString());
             if (ed != null && bg != null ) {
                 String date = String.format("%s-%s",record.getMonth(),record.getDay());
+//                System.out.println("date:"+date);
                 // 周末整天都算加班
                 if (isWeekEnd(date)) {
                     totalOverTime += calcMinuteBetween(bg,ed);
+                    Log.i(TAG, "sumOverTimeInAMonth: 周末加班"+ calcMinuteBetween(bg,ed));
+//                    System.out.println("周末加班:"+calcMinuteBetween(bg,ed));
                 } else {
                     // 周内对签到签退时间有要求
                     if (isValidClockInWeekDay(bg,ed)) {
                         // 6pm以后算加班
                         int overTime = calcMinuteBetween("18:00",ed);
                         totalOverTime += (overTime > 0) ? overTime : 0;
+                        Log.i(TAG, "sumOverTimeInAMonth: 周内加班"+ calcMinuteBetween("18:00",ed));
+//                        System.out.println("周内加班:"+ calcMinuteBetween("18:00",ed));
                     } else {
                         Log.w(TAG, "initTotalWorkTime: 考勤异常/"+ date );
+//                        System.out.println("考勤异常");
                     }
                 }
             }
         }
+        Log.i(TAG, " ====================================");
         return (double)totalOverTime/60;
     }
 
     public String[] splitTimeStr(String s) {
-        return new String[]{s.substring(0,2),s.substring(3)};
+        return new String[]{s.substring(0,2), s.substring(3)};
     }
 }
