@@ -117,4 +117,8 @@ public class ExampleUnitTest {
     public void testFormatTime() {
         System.out.println(timeUtil.formatClockTime("08.22"));
     }
+    @Test
+    public void testIsToday() {
+        System.out.println(timeUtil.isToday("2019-11","01"));
+    }
 }

@@ -118,8 +118,13 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
 
 
         Calendar calendar = calendarView.getSelectedCalendar();
-        selectDay = String.valueOf(calendar.getDay());
-        selectMonth = String.format("%s-%s",calendar.getYear(),calendar.getMonth());
+        if (calendar.getDay() < 10) {
+            selectDay = String.format("0%s",calendar.getDay());
+        } else  {
+            selectDay = String.valueOf(calendar.getDay());
+        }
+        selectMonth = String.format("%s-%s",calendar.getYear(),
+                (calendar.getMonth()<10) ? "0"+calendar.getMonth() : calendar.getMonth());
         // 填写editText时间
         initTimeInEt();
         // 日历控件监听器
@@ -232,8 +237,12 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                     //sendMessage()用来传送Message类的值到mHandler
                     mMyHandler.sendMessage(msg);*/
 //                    selectDay = String.format("%s-%s-%s",calendar.getYear(),calendar.getMonth(),calendar.getDay());
-                    selectDay = String.valueOf(calendar.getDay());
-                    Log.i(TAG, "onCalendarSelect: "+ calendar.getDay());
+                    if (calendar.getDay() < 10) {
+                        selectDay = String.format("0%s",calendar.getDay());
+                    } else  {
+                        selectDay = String.valueOf(calendar.getDay());
+                    }
+                    Log.i(TAG, "onCalendarSelect:selectDay| "+ selectDay);
                     initTimeInEt();
                 }
             }
@@ -247,7 +256,12 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 msg.what = MSG_MONTH_CHANGED;
                 mMyHandler.sendMessage(msg);*/
                 title.setText(String.format("%s年%s月",year,month));
-                selectMonth = String.format("%s-%s",year,month);
+                if (month < 10) {
+                    selectMonth = String.format("%s-0%s",year,month);
+                } else {
+                    selectMonth = String.format("%s-%s",year,month);
+                }
+                Log.i(TAG, "onMonthChange: selectMonth|"+selectMonth);
                 setTotalOverTimeInTextView();
             }
         };

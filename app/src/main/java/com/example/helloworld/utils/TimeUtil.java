@@ -44,6 +44,7 @@ public class TimeUtil {
     public boolean isToday(String month, String day) {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Log.i(TAG, "isToday: 获取日期/"+dateFormat.format(date)+"日历日期/"+String.format("%s-%s",month, day));
         if (dateFormat.format(date).equals(String.format("%s-%s",month, day))){
             return true;
         }
