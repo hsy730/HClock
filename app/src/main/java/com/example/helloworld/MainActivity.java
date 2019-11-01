@@ -25,12 +25,8 @@ import com.example.helloworld.utils.TimeUtil;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
-
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 public class MainActivity extends AppCompatActivity implements  Fragment.MyDialogFragment_Listener{
 
@@ -51,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     private boolean validSignOut;
     private TextView overTime;
     private String preSignInTime, preSignOutTime;
-//    private boolean isSignIn = true;
-//    private String signInTime = null;
     String TAG="MainActivity";
 
     @Override
@@ -81,14 +75,14 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 break;
             // 签到按钮
             case R.id.clock_in:
-                clockIn();
-                signInBt.setVisibility(View.GONE);
-                signOutBt.setVisibility(View.VISIBLE);
+//                clockIn();
+//                signInBt.setVisibility(View.GONE);
+//                signOutBt.setVisibility(View.VISIBLE);
                 break;
             // 签退按钮
             case R.id.punch_off:
-                punchOff();
-                setTotalOverTimeInTextView();
+//                punchOff();
+//                setTotalOverTimeInTextView();
                 break;
             case R.id.search_sql:
                 searchAll();
@@ -115,6 +109,25 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         overTime = findViewById(R.id.over_time);
         dbAdapter = new DatabaseAdaper(MainActivity.this);
         timeUtil = new TimeUtil();
+
+        signInBt.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clockIn();
+                signInBt.setVisibility(View.GONE);
+                signOutBt.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
+        signOutBt.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                punchOff();
+                setTotalOverTimeInTextView();
+                return false;
+            }
+        });
 
 
         Calendar calendar = calendarView.getSelectedCalendar();
@@ -178,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 Log.i(TAG, "signInTime, afterTextChanged: "+change);
                 if(!timeUtil.checkTimeFormat(change)) {
                     validSignIn = false;
-//                    Toast.makeText(MainActivity.this,"时间格式非法，请输入合法时间", Toast.LENGTH_SHORT).show();
+
                 } else {
                     validSignIn = true;
                     if (validSignOut) {
@@ -205,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 if(!timeUtil.checkTimeFormat(change)) {
                     validSignOut = false;
                     save.setClickable(false);
-//                    Toast.makeText(MainActivity.this,"时间格式非法，请输入合法时间", Toast.LENGTH_SHORT).show();
+
                 } else {
                     validSignOut = true;
                     if (validSignIn) {

@@ -154,7 +154,7 @@
         android:layout_height="60dp"
         android:id="@+id/clock_in"
         android:layout_marginTop="40dp"
-        android:onClick="click"
+
         android:layout_gravity="center_horizontal"
         android:text="签到"
         android:textSize="30dp" />
@@ -164,7 +164,7 @@
         android:id="@+id/punch_off"
         android:layout_marginTop="40dp"
         android:visibility="gone"
-        android:onClick="click"
+
         android:layout_gravity="center_horizontal"
         android:text="签退"
         android:textSize="30dp" />
