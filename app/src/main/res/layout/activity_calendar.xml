@@ -32,8 +32,8 @@
         app:scheme_text_color="#333"
         app:scheme_theme_color="#128c4b"
         app:selected_lunar_text_color="#CFCFCF"
-        app:month_view="com.example.helloworld.meizu.MeiZuMonthView"
-        app:week_view="com.example.helloworld.meizu.MeiZuWeekView"
+        app:month_view="com.example.hclock.meizu.MeiZuMonthView"
+        app:week_view="com.example.hclock.meizu.MeiZuWeekView"
         app:selected_text_color="#333"
         app:selected_theme_color="#108cd4"
         app:week_background="#fff"
@@ -180,7 +180,7 @@
         android:text="查询"
         android:textSize="30dp" />
 
-    <com.example.helloworld.view.CirclePercentView
+    <com.example.hclock.view.CirclePercentView
         android:id="@+id/circle_percent_progress"
         android:layout_width="200dp"
         android:layout_height="200dp"

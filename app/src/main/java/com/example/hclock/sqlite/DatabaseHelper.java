@@ -1,4 +1,4 @@
-package com.example.helloworld.sqlite;
+package com.example.hclock.sqlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

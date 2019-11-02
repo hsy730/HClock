@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="ButtonCircleProgressBar">
-
-        <!--无进度时的颜色-->
-        <attr name="progress_unreached_color" format="color" />
-        <!--进度颜色-->
-        <attr name="progress_reached_color" format="color" />
-        <!--进度条的高-->
-        <attr name="progress_reached_bar_height" format="dimension" />
-        <!--无进度时的边框高-->
-        <attr name="progress_unreached_bar_height" format="dimension" />
-        <!--圆的半径-->
-        <attr name="radius" format="dimension" />
-    </declare-styleable>
-
     <declare-styleable name="CirclePercentView">
         <!--圆弧背景色-->
         <attr name="circleBgColor" format="reference" />

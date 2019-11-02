@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hello world</string>
+    <string name="app_name">HClock</string>
 <!--    <String name="ok">确定</String>-->
 <!--    <String name="cancel">取消</String>-->
 </resources>

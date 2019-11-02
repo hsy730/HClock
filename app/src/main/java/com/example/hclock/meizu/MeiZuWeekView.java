@@ -1,4 +1,4 @@
-package com.example.helloworld.meizu;
+package com.example.hclock.meizu;
 
 import android.content.Context;
 import android.graphics.Canvas;

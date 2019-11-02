@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.hclock;
 
 
 import android.app.Activity;
@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
-import com.example.helloworld.utils.TimeUtil;
+import com.example.hclock.utils.TimeUtil;
 
 
 public class Fragment extends DialogFragment {

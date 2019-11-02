@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.hclock;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -18,13 +18,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.helloworld.listener.MyOnCalendarSelectListener;
-import com.example.helloworld.listener.MyOnMonthChangeListener;
-import com.example.helloworld.sqlite.DatabaseAdaper;
-import com.example.helloworld.sqlite.WorkTimeRecord;
-import com.example.helloworld.utils.StringUtil;
-import com.example.helloworld.utils.TimeUtil;
-import com.example.helloworld.view.CirclePercentView;
+import com.example.hclock.listener.MyOnCalendarSelectListener;
+import com.example.hclock.listener.MyOnMonthChangeListener;
+import com.example.hclock.sqlite.DatabaseAdaper;
+import com.example.hclock.sqlite.WorkTimeRecord;
+import com.example.hclock.utils.StringUtil;
+import com.example.hclock.utils.TimeUtil;
+import com.example.hclock.view.CirclePercentView;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 

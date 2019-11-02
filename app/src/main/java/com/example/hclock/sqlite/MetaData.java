@@ -1,4 +1,4 @@
-package com.example.helloworld.sqlite;
+package com.example.hclock.sqlite;
 
 import android.provider.BaseColumns;
 

@@ -1,10 +1,8 @@
-package com.example.helloworld;
+package com.example.hclock;
 
-import android.util.Log;
-
-import com.example.helloworld.sqlite.WorkTimeRecord;
-import com.example.helloworld.utils.StringUtil;
-import com.example.helloworld.utils.TimeUtil;
+import com.example.hclock.sqlite.WorkTimeRecord;
+import com.example.hclock.utils.StringUtil;
+import com.example.hclock.utils.TimeUtil;
 
 import org.junit.Test;
 

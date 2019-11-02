@@ -1,4 +1,4 @@
-package com.example.helloworld.utils;
+package com.example.hclock.utils;
 
 public class StringUtil {
     public static boolean isEmpty(String s) {

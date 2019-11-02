@@ -1,8 +1,8 @@
-package com.example.helloworld.utils;
+package com.example.hclock.utils;
 
 import android.util.Log;
 
-import com.example.helloworld.sqlite.WorkTimeRecord;
+import com.example.hclock.sqlite.WorkTimeRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

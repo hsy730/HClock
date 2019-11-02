@@ -1,4 +1,4 @@
-package com.example.helloworld.view;
+package com.example.hclock.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,19 +14,20 @@ import android.view.View;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 
-import com.example.helloworld.R;
+import com.example.hclock.R;
 
 /**
  * 圆形进度条（可设置 线性渐变-背景色-进度条颜色-圆弧宽度）
  * Created by ZWQ 
  */
 public class CirclePercentView extends View {
-
-    public static final int WIDTH_RADIUS_RATIO = 8;     // 弧线半径 : 弧线线宽 (比例)
+    // 弧线半径 : 弧线线宽 (比例)
+    public static final int WIDTH_RADIUS_RATIO = 8;
     public static final int MAX = 100;
     private Paint mPaint;
     private float progressPercent;
-    private int radius;//圆弧宽度
+    //圆弧宽度
+    private int radius;
     private RectF rectF;
     private int bgColor, progressColor;
     private int startColor, endColor;
@@ -59,7 +60,8 @@ public class CirclePercentView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());//自定义的View能够使用wrap_content或者是match_parent的属性
+        //自定义的View能够使用wrap_content或者是match_parent的属性
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
     }
 
     @Override
