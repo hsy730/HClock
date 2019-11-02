@@ -1,8 +1,6 @@
 package com.example.helloworld;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,11 +8,15 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.helloworld.listener.MyOnCalendarSelectListener;
 import com.example.helloworld.listener.MyOnMonthChangeListener;
@@ -22,6 +24,7 @@ import com.example.helloworld.sqlite.DatabaseAdaper;
 import com.example.helloworld.sqlite.WorkTimeRecord;
 import com.example.helloworld.utils.StringUtil;
 import com.example.helloworld.utils.TimeUtil;
+import com.example.helloworld.view.CirclePercentView;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
@@ -48,6 +51,12 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     private TextView overTime;
     private String preSignInTime, preSignOutTime;
     String TAG="MainActivity";
+    static CirclePercentView circlePercentView;
+    public static final int ANIMATOR_DURATION = 1000;
+    public static final int MSG_CIRCLE_PROGRESS= 0x152;
+    ObjectAnimator animator;
+    private MyHandler myHandler = new MyHandler(MainActivity.this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +66,71 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         setContentView(R.layout.activity_calendar);
         //获取选择的日期
         initLayout();
+
+
+    }
+
+    /**
+     * 设置百分比
+     * @param max     最大值
+     * @param current 占比
+     */
+    private void setData(int max, float current) {
+        float percentage = (100f * current) / max;
+        animator = ObjectAnimator.ofFloat(circlePercentView, "percentage", 0, percentage);
+        animator.setDuration(ANIMATOR_DURATION);
+        animator.start();
+    }
+
+    private void startCircleProgress() {
+        animator = ObjectAnimator.ofFloat(circlePercentView, "percentage", 0, 100f);
+        animator.setDuration(ANIMATOR_DURATION);
+        animator.start();
+
+
+    }
+
+    class ButtonListener implements View.OnClickListener, View.OnTouchListener {
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.circle_percent_progress){
+                Log.d("test", "cansal button ---> click");
+            }
+        }
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if(v.getId() == R.id.circle_percent_progress){
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    Toast.makeText(MainActivity.this,"按下", Toast.LENGTH_SHORT).show();
+                    startCircleProgress();
+                }
+
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    Toast.makeText(MainActivity.this,"松开", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "onTouch: currentPlayTime"+  animator.getCurrentPlayTime());
+                    // 播放完playtime为0
+                    if(animator.getCurrentPlayTime() == 0) {
+                        Toast.makeText(MainActivity.this,"播放完成", Toast.LENGTH_SHORT).show();
+                        if(v.getBackground().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.signin).getConstantState()){
+                            Log.i(TAG, "onTouch: 签到成功");
+                            clockIn();
+                            v.setBackground(getResources().getDrawable(R.drawable.signout));
+//                            signInBt.setVisibility(View.GONE);
+//                            signOutBt.setVisibility(View.VISIBLE);
+                        } else {
+                            Log.i(TAG, "onTouch: 签退成功");
+                            punchOff();
+                            setTotalOverTimeInTextView();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this,"播放未完成", Toast.LENGTH_SHORT).show();
+                    }
+                    animator.cancel();
+                    circlePercentView.setPercentage(0);
+                }
+            }
+            return false;
+        }
     }
 
     public void click(View view) {
@@ -73,17 +147,17 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 setTotalOverTimeInTextView();
                 Toast.makeText(this,"保存成功", Toast.LENGTH_SHORT).show();
                 break;
-            // 签到按钮
+      /*      // 签到按钮
             case R.id.clock_in:
-//                clockIn();
-//                signInBt.setVisibility(View.GONE);
-//                signOutBt.setVisibility(View.VISIBLE);
+                clockIn();
+                signInBt.setVisibility(View.GONE);
+                signOutBt.setVisibility(View.VISIBLE);
                 break;
             // 签退按钮
             case R.id.punch_off:
-//                punchOff();
-//                setTotalOverTimeInTextView();
-                break;
+                punchOff();
+                setTotalOverTimeInTextView();
+                break;*/
             case R.id.search_sql:
                 searchAll();
                 break;
@@ -110,7 +184,13 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         dbAdapter = new DatabaseAdaper(MainActivity.this);
         timeUtil = new TimeUtil();
 
-        signInBt.setOnLongClickListener(new View.OnLongClickListener() {
+        circlePercentView = findViewById(R.id.circle_percent_progress);
+        circlePercentView.setPercentage(0);
+        ButtonListener b = new ButtonListener();
+        circlePercentView.setOnClickListener(b);
+        circlePercentView.setOnTouchListener(b);
+
+    /*    signInBt.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 clockIn();
@@ -127,8 +207,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 setTotalOverTimeInTextView();
                 return false;
             }
-        });
-
+        });*/
 
         Calendar calendar = calendarView.getSelectedCalendar();
         if (calendar.getDay() < 10) {
@@ -168,14 +247,16 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     private void showSignInOrSignOutButton() {
         todayRecord = dbAdapter.getRecordAtDayOfMonth(timeUtil.getCurYearMonth(),timeUtil.getCurrentDayInMonth());
         if(todayRecord == null) {
-            signInBt.setVisibility(View.VISIBLE);
-            signOutBt.setVisibility(View.GONE);
+//            signInBt.setVisibility(View.VISIBLE);
+//            signOutBt.setVisibility(View.GONE);
+            circlePercentView.setBackground(getResources().getDrawable(R.drawable.signin));
             Log.i(TAG, "initSignInAndSignOutButton: 无数据，显示签到按钮");
         } else {
             // 保存签到时间，签退时更新数据库
 //            todaySignInTime = todayRecord.getBeginTime();
-            signInBt.setVisibility(View.GONE);
-            signOutBt.setVisibility(View.VISIBLE);
+//            signInBt.setVisibility(View.GONE);
+//            signOutBt.setVisibility(View.VISIBLE);
+            circlePercentView.setBackground(getResources().getDrawable(R.drawable.signout));
             Log.i(TAG, "initSignInAndSignOutButton: "+todayRecord.toString());
         }
     }
@@ -191,7 +272,6 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                 Log.i(TAG, "signInTime, afterTextChanged: "+change);
                 if(!timeUtil.checkTimeFormat(change)) {
                     validSignIn = false;
-
                 } else {
                     validSignIn = true;
                     if (validSignOut) {
@@ -307,13 +387,10 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     private void makeTimeEtEditableAndShowSaveBt() {
         preSignInTime = signInEt.getText().toString().trim();
         preSignOutTime = signOutEt.getText().toString().trim();
-
         signInEt.setFocusable(true);
         signInEt.setFocusableInTouchMode(true);
-
         signOutEt.setFocusable(true);
         signOutEt.setFocusableInTouchMode(true);
-
         edit.setVisibility(View.GONE);
         save.setVisibility(View.VISIBLE);
         Toast.makeText(this,"可以修改", Toast.LENGTH_SHORT).show();
@@ -322,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     private void makeTimeEtUneditableAndShowEditBt() {
         signInEt.setFocusable(false);
         signInEt.setFocusableInTouchMode(false);
-
         signOutEt.setFocusable(false);
         signOutEt.setFocusableInTouchMode(false);
         edit.setVisibility(View.VISIBLE);
@@ -388,6 +464,10 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                    /* case MSG_MONTH_CHANGED:
                         String MonthInfo = (String)msg.obj;
                         title.setText(MonthInfo);*/
+                    case MSG_CIRCLE_PROGRESS:
+                        int progress = (int)msg.obj;
+                        circlePercentView.setPercentage(progress);
+                        break;
                     default:
                         break;
                 }

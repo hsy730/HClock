@@ -136,7 +136,7 @@
         <TextView
             android:id="@+id/over_time"
             android:layout_width="80dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
             android:layout_height="wrap_content"
             android:text="5h"
             android:textSize="25sp" />
@@ -144,6 +144,7 @@
         <TextView
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:text="小时"/>
 
@@ -153,8 +154,8 @@
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:id="@+id/clock_in"
-        android:layout_marginTop="40dp"
-
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal"
         android:text="签到"
         android:textSize="30dp" />
@@ -162,9 +163,8 @@
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:id="@+id/punch_off"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:visibility="gone"
-
         android:layout_gravity="center_horizontal"
         android:text="签退"
         android:textSize="30dp" />
@@ -175,8 +175,20 @@
         android:id="@+id/search_sql"
         android:layout_marginTop="10dp"
         android:onClick="click"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal"
         android:text="查询"
         android:textSize="30dp" />
+
+    <com.example.helloworld.view.CirclePercentView
+        android:id="@+id/circle_percent_progress"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/signin"
+        android:layout_gravity="center_horizontal"
+        app:circleBgColor="@color/fg_brown"
+        app:circleIsGradient="true"
+        app:circleProgressColor="@color/control_activated_indigo" />
 
 </LinearLayout>
