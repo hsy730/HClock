@@ -101,16 +101,16 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         public boolean onTouch(View v, MotionEvent event) {
             if(v.getId() == R.id.circle_percent_progress){
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    Toast.makeText(MainActivity.this,"按下", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this,"按下", Toast.LENGTH_SHORT).show();
                     startCircleProgress();
                 }
 
                 if(event.getAction() == MotionEvent.ACTION_UP){
-                    Toast.makeText(MainActivity.this,"松开", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this,"松开", Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "onTouch: currentPlayTime"+  animator.getCurrentPlayTime());
                     // 播放完playtime为0
                     if(animator.getCurrentPlayTime() == 0) {
-                        Toast.makeText(MainActivity.this,"播放完成", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"打卡成功", Toast.LENGTH_SHORT).show();
                         if(v.getBackground().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.signin).getConstantState()){
                             Log.i(TAG, "onTouch: 签到成功");
                             clockIn();
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
                             setTotalOverTimeInTextView();
                         }
                     } else {
-                        Toast.makeText(MainActivity.this,"播放未完成", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"打卡失败", Toast.LENGTH_SHORT).show();
                     }
                     animator.cancel();
                     circlePercentView.setPercentage(0);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
     }
 
     public void click(View view) {
-        System.out.println("我被点击了");
+//        System.out.println("我被点击了");
         switch (view.getId()){
             // 编辑按钮
             case R.id.edit:
@@ -189,6 +189,8 @@ public class MainActivity extends AppCompatActivity implements  Fragment.MyDialo
         ButtonListener b = new ButtonListener();
         circlePercentView.setOnClickListener(b);
         circlePercentView.setOnTouchListener(b);
+
+
 
     /*    signInBt.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
