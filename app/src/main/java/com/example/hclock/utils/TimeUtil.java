@@ -244,6 +244,9 @@ public class TimeUtil {
                     if (isValidClockInWeekDay(bg,ed)) {
                         // 6pm以后算加班
                         int overTime = calcMinuteBetween("18:00",ed);
+                        if (bg.compareTo("08:30") < 0) {
+                            overTime += calcMinuteBetween(bg, "08:30");
+                        }
                         totalOverTime += (overTime > 0) ? overTime : 0;
                         Log.i(TAG, "sumOverTimeInAMonth: 周内加班"+ calcMinuteBetween("18:00",ed));
 //                        System.out.println("周内加班:"+ calcMinuteBetween("18:00",ed));
